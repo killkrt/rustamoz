@@ -39,6 +39,11 @@ impl Vector {
     pub fn abs(&self) -> Self {
         Self::new(self.0.abs(), self.1.abs(), self.2.abs())
     }
+
+    /// Returns a vector with all components set to zero.
+    pub fn zero() -> Self {
+        Self::new(0, 0, 0)
+    }
 }
 
 impl Add<Vector> for Vector {
@@ -174,6 +179,44 @@ mod tests {
             assert_eq!(v.0.abs(), av.0);
             assert_eq!(v.1.abs(), av.1);
             assert_eq!(v.2.abs(), av.2);
+        }
+    }
+
+    #[test]
+    /// Check if v + 0 = v
+    fn add_zero() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Vector 0 components
+            let x0 = random_number(0 as Scalar, 100 as Scalar);
+            let y0 = random_number(0 as Scalar, 100 as Scalar);
+            let z0 = random_number(0 as Scalar, 100 as Scalar);
+
+            let v0 = Vector(x0, y0, z0);
+
+            let v_sum = v0 + Vector::zero();
+
+            assert_eq!(v_sum.0, x0);
+            assert_eq!(v_sum.1, y0);
+            assert_eq!(v_sum.2, z0);
+        }
+    }
+
+    #[test]
+    /// Check if v - 0 = v
+    fn sub_zero() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Vector 0 components
+            let x0 = random_number(0 as Scalar, 100 as Scalar);
+            let y0 = random_number(0 as Scalar, 100 as Scalar);
+            let z0 = random_number(0 as Scalar, 100 as Scalar);
+
+            let v0 = Vector(x0, y0, z0);
+
+            let v_sum = v0 - Vector::zero();
+
+            assert_eq!(v_sum.0, x0);
+            assert_eq!(v_sum.1, y0);
+            assert_eq!(v_sum.2, z0);
         }
     }
 }

@@ -98,13 +98,13 @@ mod tests {
     fn add_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
             // Vector 1 components
-            let x1 = random_number(0 as Scalar, 100 as Scalar);
-            let y1 = random_number(0 as Scalar, 100 as Scalar);
-            let z1 = random_number(0 as Scalar, 100 as Scalar);
+            let x1 = random_number(-100 as Scalar, 100 as Scalar);
+            let y1 = random_number(-100 as Scalar, 100 as Scalar);
+            let z1 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector(x0, y0, z0);
             let v1 = Vector(x1, y1, z1);
@@ -122,13 +122,13 @@ mod tests {
     fn sub_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
             // Vector 1 components
-            let x1 = random_number(0 as Scalar, 100 as Scalar);
-            let y1 = random_number(0 as Scalar, 100 as Scalar);
-            let z1 = random_number(0 as Scalar, 100 as Scalar);
+            let x1 = random_number(-100 as Scalar, 100 as Scalar);
+            let y1 = random_number(-100 as Scalar, 100 as Scalar);
+            let z1 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector(x0, y0, z0);
             let v1 = Vector(x1, y1, z1);
@@ -146,9 +146,9 @@ mod tests {
     fn getter_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector(x0, y0, z0);
 
@@ -163,9 +163,9 @@ mod tests {
     fn constructor_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector::new(x0, y0, z0);
 
@@ -193,9 +193,9 @@ mod tests {
     fn add_zero() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector(x0, y0, z0);
 
@@ -212,9 +212,9 @@ mod tests {
     fn sub_zero() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             // Vector 0 components
-            let x0 = random_number(0 as Scalar, 100 as Scalar);
-            let y0 = random_number(0 as Scalar, 100 as Scalar);
-            let z0 = random_number(0 as Scalar, 100 as Scalar);
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
 
             let v0 = Vector(x0, y0, z0);
 
@@ -223,6 +223,53 @@ mod tests {
             assert_eq!(v_sum.0, x0);
             assert_eq!(v_sum.1, y0);
             assert_eq!(v_sum.2, z0);
+        }
+    }
+
+    #[test]
+    /// Check if v - v = 0
+    fn sum_to_zero() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Vector 0 components
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
+            let v0 = Vector(x0, y0, z0);
+
+            // Vector 1 as -v0
+            let v1 = Vector(-x0, -y0, -z0);
+            let v0_sum = v0 - v0;
+            let v1_sum = v0 + v1;
+
+            assert_eq!(v0_sum.0, 0);
+            assert_eq!(v0_sum.1, 0);
+            assert_eq!(v0_sum.2, 0);
+
+            assert_eq!(v1_sum.0, 0);
+            assert_eq!(v1_sum.1, 0);
+            assert_eq!(v1_sum.2, 0);
+
+            assert_eq!(v0_sum, Vector::zero());
+            assert_eq!(v1_sum, Vector::zero());
+        }
+    }
+
+    #[test]
+    /// Subtract a random vector to vector 0
+    fn subtract_to_zero() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Vector 0 components
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
+            let v0 = Vector(x0, y0, z0);
+
+            // Vector 1 as -v0
+            let sub = Vector::zero() - v0;
+
+            assert_eq!(sub.0, -x0);
+            assert_eq!(sub.1, -y0);
+            assert_eq!(sub.2, -z0);
         }
     }
 }

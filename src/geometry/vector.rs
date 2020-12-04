@@ -9,6 +9,12 @@ pub type Scalar = i32;
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Vector(Scalar, Scalar, Scalar);
 
+/// A position is a Vector
+pub type Position = Vector;
+
+/// A distance is a Vector
+pub type Distance = Vector;
+
 impl Vector {
     /// Create a new vector with given components
     pub fn new(x: Scalar, y: Scalar, z: Scalar) -> Self {

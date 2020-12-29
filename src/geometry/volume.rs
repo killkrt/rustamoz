@@ -2,7 +2,7 @@ use super::vector::Position;
 use super::vector::{Distance, Scalar};
 use log::warn;
 use serde::Serialize;
-use std::{cmp::Ordering, collections::binary_heap::Iter};
+use std::cmp::Ordering;
 
 /// Represents a bounduary box/volume
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize)]

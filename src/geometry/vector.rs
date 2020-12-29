@@ -335,15 +335,15 @@ mod tests {
         let mut none_cnt = 0;
 
         let vectors = [
-            [1, 1, 1], // eq
-            [0, 0, 0], // less
-            [0, 0, 1], // none
-            [2, 2, 2], // great
-            [1, 2, 2], // none
+            [1, 1, 1],    // eq
+            [0, 0, 0],    // less
+            [0, 0, 1],    // none
+            [2, 2, 2],    // great
+            [1, 2, 2],    // none
             [-1, -1, -1], // less
-            [1, -1, 2], // none
-            [1, 1, 2], // none
-            [2, 5, 2], // great
+            [1, -1, 2],   // none
+            [1, 1, 2],    // none
+            [2, 5, 2],    // great
         ];
 
         for components in &vectors {

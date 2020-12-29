@@ -1,4 +1,5 @@
-//use std::cmp::Ordering;
+use serde::Serialize;
+use std::cmp::Ordering;
 use std::ops::Add;
 use std::ops::Sub;
 
@@ -6,7 +7,7 @@ use std::ops::Sub;
 pub type Scalar = i32;
 
 /// Represent a generic vector of integers
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize)]
 pub struct Vector(Scalar, Scalar, Scalar);
 
 /// A position is a Vector
@@ -72,6 +73,34 @@ impl Sub<Vector> for Vector {
     /// Subtract vector components each other
     fn sub(self, other: Vector) -> Self::Output {
         Self(self.0 - other.0, self.1 - other.1, self.2 - other.2)
+    }
+}
+
+impl PartialOrd for Vector {
+    /// Comparison criteria:
+    /// * Equal - all components are equal
+    /// * Less - all components are less than respectively others
+    /// * Great - all components are great than respectively others
+    ///
+    /// Returns `Option::None` if none of the above apply
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self == other {
+            // All components are equal than other
+            Some(Ordering::Equal)
+        } else {
+            if self.0 < other.0 && self.1 < other.1 && self.2 < other.2 {
+                // All components are less than other
+                Some(Ordering::Less)
+            } else {
+                if self.0 > other.0 && self.1 > other.1 && self.2 > other.2 {
+                    // All components are greater than other
+                    Some(Ordering::Greater)
+                } else {
+                    // Not clear comparison possible
+                    None
+                }
+            }
+        }
     }
 }
 
@@ -294,6 +323,37 @@ mod tests {
             assert_eq!(sub.0, -x0);
             assert_eq!(sub.1, -y0);
             assert_eq!(sub.2, -z0);
+        }
+    }
+
+    #[test]
+    /// Compares different vectors
+    fn comparison_test() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Vector 0 components
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
+            let v0 = Vector(x0, y0, z0);
+            // Vector 1 components
+            let x1 = random_number(-100 as Scalar, 100 as Scalar);
+            let y1 = random_number(-100 as Scalar, 100 as Scalar);
+            let z1 = random_number(-100 as Scalar, 100 as Scalar);
+            let v1 = Vector(x1, y1, z1);
+
+            if x0 == x1 && y0 == y1 && z0 == z1 {
+                assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Equal));
+            } else {
+                if x0 < x1 && y0 < y1 && z0 < z1 {
+                    assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Less));
+                } else {
+                    if x0 > x1 && y0 > y1 && z0 > z1 {
+                        assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Greater));
+                    } else {
+                        assert_eq!(v0.partial_cmp(&v1), None);
+                    }
+                }
+            }
         }
     }
 }

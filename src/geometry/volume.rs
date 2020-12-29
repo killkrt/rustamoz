@@ -37,6 +37,21 @@ impl Volume {
             }
         }
     }
+
+    /// Returns diagonal of volume (distance between top right corner and bottom left corner)
+    pub fn diagonal(&self) -> Distance {
+        self.diagonal
+    }
+
+    /// Get bottom left corner
+    pub fn bottom_left_corner(&self) -> Position {
+        self.bottom_left_corner
+    }
+
+    /// Get top right corner
+    pub fn top_right_corner(&self) -> Position {
+        self.top_right_corner
+    }
 }
 
 #[cfg(test)]
@@ -79,7 +94,10 @@ mod tests {
             } else {
                 if x0 < x1 && y0 < y1 && z0 < z1 {
                     assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Less));
-                    assert_ne!(Volume::new(&v0, &v1), None);
+                    let vol = Volume::new(&v0, &v1);
+                    assert_ne!(vol, None);
+                    assert_eq!(vol.unwrap().top_right_corner(), v1);
+                    assert_eq!(vol.unwrap().bottom_left_corner(), v0);
                 } else {
                     if x0 > x1 && y0 > y1 && z0 > z1 {
                         assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Greater));
@@ -100,6 +118,20 @@ mod tests {
             let vol = Volume::new(&v0, &v1);
 
             assert_eq!(vol.is_some(), v0.partial_cmp(&v1) == Some(Ordering::Less));
+        }
+    }
+
+    #[test]
+    /// Check if volume diagonal is computer correctly
+    fn diagonal_test() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            let vol = random_volume(1, 100);
+            assert_eq!(
+                vol.top_right_corner() - vol.bottom_left_corner(),
+                vol.diagonal()
+            );
+            // Diagonal must be always great than (0,0,0)
+            assert!(vol.diagonal.partial_cmp(&Vector::zero()) == Some(Ordering::Greater));
         }
     }
 }

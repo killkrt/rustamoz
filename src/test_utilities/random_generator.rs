@@ -1,7 +1,10 @@
 #![cfg(test)]
 #![allow(dead_code)]
 
-use crate::geometry::vector::{Scalar, Vector};
+use crate::geometry::{
+    vector::{Scalar, Vector},
+    volume::Volume,
+};
 use num::Num;
 
 /// Generate a random cell coordinate to be used for test
@@ -15,7 +18,16 @@ where
     rng.gen_range(min, max)
 }
 
-/// Generate a vector with random coordinates generate in the range of (min, max)
+/// Generate a vector with random coordinates and diagonal in range (min, max)
+pub fn random_volume(min: Scalar, max: Scalar) -> Volume {
+    let blc = random_vector(-100, 100);
+    let diagonal = random_vector(min, max);
+    let trc = blc + diagonal;
+
+    Volume::new(&blc, &trc).expect("Invalid corners")
+}
+
+/// Generate a volume with random coordinates generate in the range of (min, max)
 pub fn random_vector(min: Scalar, max: Scalar) -> Vector {
     let x = random_number(min as Scalar, max as Scalar);
     let y = random_number(min as Scalar, max as Scalar);

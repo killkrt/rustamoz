@@ -41,6 +41,11 @@ impl Vector {
         self.0 >= 0 && self.1 >= 0 && self.2 >= 0
     }
 
+    /// Returns true if all components are equal to 0
+    pub fn is_zero(&self) -> bool {
+        self.0 == 0 && self.1 == 0 && self.2 == 0
+    }
+
     /// Returns a vector with components equal to provided one, but with absolute values
     pub fn abs(&self) -> Self {
         Self::new(self.0.abs(), self.1.abs(), self.2.abs())
@@ -90,6 +95,25 @@ mod tests {
 
             assert_eq!(v.is_positive(), x0 >= 0 && y0 >= 0 && z0 >= 0);
             assert_eq!(!v.is_positive(), x0 < 0 || y0 < 0 || z0 < 0);
+        }
+    }
+
+    #[test]
+    /// Check if is_zero returns only for vector with only
+    /// 0 components
+    fn is_zero_test() {
+        assert!(Vector::zero().is_zero());
+
+        for _ in 0..NUMBER_OF_LOOPS_FOR_BIG_TEST {
+            // Random number
+            let x0 = random_number(-100 as Scalar, 100 as Scalar);
+            let y0 = random_number(-100 as Scalar, 100 as Scalar);
+            let z0 = random_number(-100 as Scalar, 100 as Scalar);
+            // Vector
+            let v = Vector::new(x0, y0, z0);
+
+            assert_eq!(v.is_zero(), x0 == 0 && y0 == 0 && z0 == 0);
+            assert_eq!(!v.is_zero(), x0 != 0 || y0 != 0 || z0 != 0);
         }
     }
 

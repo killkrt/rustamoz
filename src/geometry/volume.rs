@@ -1,7 +1,7 @@
-use super::vector::Distance;
 use super::vector::Position;
+use super::vector::{Distance, Scalar};
 use serde::Serialize;
-use std::cmp::Ordering;
+use std::{cmp::Ordering, collections::binary_heap::Iter};
 
 /// Represents a bounduary box/volume
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize)]
@@ -51,6 +51,78 @@ impl Volume {
     /// Get top right corner
     pub fn top_right_corner(&self) -> Position {
         self.top_right_corner
+    }
+
+    /// Compute volume (how many _positions_ inside the volume)
+    pub fn volume(&self) -> Scalar {
+        let d = self.diagonal();
+        d.x() * d.y() * d.z()
+    }
+
+    /// Return whether a position is inside the bounduary box
+    pub fn is_inside(&self, position: &Position) -> bool {
+        let diff = *position - self.bottom_left_corner;
+        let diagonal = self.diagonal();
+
+        diff.x() <= diagonal.x()
+            && diff.y() <= diagonal.y()
+            && diff.z() <= diagonal.z()
+            && diff.is_positive()
+    }
+}
+
+/// Support struct for iteration over Volume
+pub struct VolumeIterator<'a> {
+    current_index: Scalar,
+    size: Scalar,
+    volume: &'a Volume,
+}
+
+impl<'a> VolumeIterator<'a> {
+    fn new(volume: &'a Volume) -> Self {
+        Self {
+            current_index: 0,
+            size: volume.volume(),
+            volume,
+        }
+    }
+}
+
+impl<'a> Iterator for VolumeIterator<'a> {
+    type Item = Position;
+
+    fn next(&mut self) -> Option<Position> {
+        if self.current_index >= self.size {
+            None
+        } else {
+            // Origin of volume
+            let origin = self.volume.bottom_left_corner();
+            // Diagonal
+            let diagonal = self.volume.diagonal();
+            // Size of volume on X and Y axis
+            let x_size = diagonal.x();
+            let y_size = diagonal.y();
+            // Current index position for iteration
+            let index = self.current_index;
+            // Compute position using origin + f(index)
+            let x = origin.x() + (index as Scalar % x_size);
+            let y = origin.y() + ((index as Scalar / x_size) % y_size);
+            let z = origin.z() + (index as Scalar / (x_size * y_size));
+
+            // Next position
+            self.current_index += 1;
+
+            Some(Position::new(x, y, z))
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a Volume {
+    type Item = Position;
+    type IntoIter = VolumeIterator<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        VolumeIterator::new(self)
     }
 }
 
@@ -132,6 +204,93 @@ mod tests {
             );
             // Diagonal must be always great than (0,0,0)
             assert!(vol.diagonal.partial_cmp(&Vector::zero()) == Some(Ordering::Greater));
+        }
+    }
+
+    #[test]
+    /// Check if volume is computed correctly
+    fn volume_test() {
+        // Volume of size 1 test
+        assert_eq!(
+            Volume::new(&Position::new(0, 0, 0), &Position::new(1, 1, 1))
+                .unwrap()
+                .volume(),
+            1
+        );
+
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            // Create volume
+            let vol = random_volume(1, 100);
+            let d0 = vol.diagonal();
+            assert_eq!(vol.volume(), d0.x() * d0.y() * d0.z());
+        }
+    }
+
+    #[test]
+    /// Check if iterator returns all the positions inside the volume
+    fn iterator_test() {
+        use std::collections::HashMap;
+
+        for _ in 0..NUMBER_OF_LOOPS_FOR_SMALL_TEST {
+            let bbox = random_volume(1, 10);
+
+            // The iterator should countain all the position in the "volume"
+            assert_eq!(bbox.into_iter().count(), bbox.volume() as usize);
+            // All positions returned by iterator should be inside the bounding box
+            assert!(bbox.into_iter().all(|pos| bbox.is_inside(&pos)));
+            // There should be not duplicates
+            // Usage of hash table instead of simpler vector for perfomance reason
+            let mut positions = HashMap::new();
+            for pos in &bbox {
+                // Position should not already exist
+                assert!(!positions.contains_key(&pos));
+                positions.insert(pos, 0);
+            }
+            assert_eq!(positions.keys().len(), bbox.volume() as usize);
+        }
+    }
+
+    #[test]
+    /// Check if a given point is insied or outside the bounding box
+    fn inside_test() {
+        const SIZE: Scalar = 5;
+        const DELTA: Scalar = 5;
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+            let blc = Position::from(random_vector(-SIZE, SIZE));
+            let diagonal = Distance::from(random_vector(1, SIZE));
+            let trc = blc + diagonal;
+            let bb = Volume::new(&blc, &trc).unwrap();
+            let blc = bb.bottom_left_corner();
+
+            // Create all points in an area around volume with a panning of DELTA
+            for x in blc.x() - DELTA..blc.x() + DELTA {
+                for y in blc.y() - DELTA..blc.y() + DELTA {
+                    for z in blc.z() - DELTA..blc.z() + DELTA {
+                        let point = Position::new(x, y, z);
+
+                        let d_x = point.x() - blc.x();
+                        let d_y = point.y() - blc.y();
+                        let d_z = point.z() - blc.z();
+
+                        let is_inside0 = d_x <= diagonal.x()
+                            && d_y <= diagonal.y()
+                            && d_z <= diagonal.z()
+                            && d_x >= 0
+                            && d_y >= 0
+                            && d_z >= 0;
+
+                        let is_inside1 = x >= blc.x()
+                            && x <= trc.x()
+                            && y >= blc.y()
+                            && y <= trc.y()
+                            && z >= blc.z()
+                            && z <= trc.z();
+
+                        assert_eq!(is_inside0, bb.is_inside(&Position::from(point)));
+                        assert_eq!(is_inside1, bb.is_inside(&Position::from(point)));
+                    }
+                }
+            }
         }
     }
 }

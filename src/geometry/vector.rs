@@ -329,31 +329,56 @@ mod tests {
     #[test]
     /// Compares different vectors
     fn comparison_test() {
-        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+        let mut eq_cnt = 0;
+        let mut less_cnt = 0;
+        let mut great_cnt = 0;
+        let mut none_cnt = 0;
+
+        let vectors = [
+            [1, 1, 1], // eq
+            [0, 0, 0], // less
+            [0, 0, 1], // none
+            [2, 2, 2], // great
+            [1, 2, 2], // none
+            [-1, -1, -1], // less
+            [1, -1, 2], // none
+            [1, 1, 2], // none
+            [2, 5, 2], // great
+        ];
+
+        for components in &vectors {
             // Vector 0 components
-            let x0 = random_number(-100 as Scalar, 100 as Scalar);
-            let y0 = random_number(-100 as Scalar, 100 as Scalar);
-            let z0 = random_number(-100 as Scalar, 100 as Scalar);
+            let x0 = 1;
+            let y0 = 1;
+            let z0 = 1;
             let v0 = Vector(x0, y0, z0);
             // Vector 1 components
-            let x1 = random_number(-100 as Scalar, 100 as Scalar);
-            let y1 = random_number(-100 as Scalar, 100 as Scalar);
-            let z1 = random_number(-100 as Scalar, 100 as Scalar);
+            let x1 = components[0];
+            let y1 = components[1];
+            let z1 = components[2];
             let v1 = Vector(x1, y1, z1);
 
             if x0 == x1 && y0 == y1 && z0 == z1 {
                 assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Equal));
+                eq_cnt += 1;
             } else {
                 if x0 < x1 && y0 < y1 && z0 < z1 {
                     assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Less));
+                    less_cnt += 1;
                 } else {
                     if x0 > x1 && y0 > y1 && z0 > z1 {
                         assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Greater));
+                        great_cnt += 1;
                     } else {
                         assert_eq!(v0.partial_cmp(&v1), None);
+                        none_cnt += 1;
                     }
                 }
             }
         }
+        assert_eq!(eq_cnt, 1);
+        assert_eq!(less_cnt, 2);
+        assert_eq!(great_cnt, 2);
+        assert_eq!(none_cnt, 4);
     }
 }

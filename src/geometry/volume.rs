@@ -1,5 +1,6 @@
 use super::vector::Position;
 use super::vector::{Distance, Scalar};
+use log::warn;
 use serde::Serialize;
 use std::{cmp::Ordering, collections::binary_heap::Iter};
 
@@ -33,6 +34,10 @@ impl Volume {
             _ =>
             // Invalid relative corners position
             {
+                warn!(
+                    "Provided corners are not valid: BLC {:?} - TRC {:?}",
+                    blc, trc
+                );
                 None
             }
         }

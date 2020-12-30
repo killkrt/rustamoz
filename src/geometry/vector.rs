@@ -87,19 +87,15 @@ impl PartialOrd for Vector {
         if self == other {
             // All components are equal than other
             Some(Ordering::Equal)
+        } else if self.0 < other.0 && self.1 < other.1 && self.2 < other.2 {
+            // All components are less than other
+            Some(Ordering::Less)
+        } else if self.0 > other.0 && self.1 > other.1 && self.2 > other.2 {
+            // All components are greater than other
+            Some(Ordering::Greater)
         } else {
-            if self.0 < other.0 && self.1 < other.1 && self.2 < other.2 {
-                // All components are less than other
-                Some(Ordering::Less)
-            } else {
-                if self.0 > other.0 && self.1 > other.1 && self.2 > other.2 {
-                    // All components are greater than other
-                    Some(Ordering::Greater)
-                } else {
-                    // Not clear comparison possible
-                    None
-                }
-            }
+            // Not clear comparison possible
+            None
         }
     }
 }

@@ -6,14 +6,14 @@ use super::{vector::Position, volume::Volume};
 
 /// Possible types of cell materials
 #[derive(Debug, Copy, Clone)]
-enum CellMaterial {
+pub enum CellMaterial {
     Water,
     Ground,
 }
 
 /// Possible types of cell
 #[derive(Debug, Copy, Clone)]
-enum CellType {
+pub enum CellType {
     /// Cell full of material (cannot placed anything on top of that)
     Fill(CellMaterial),
     /// Flat cell (stuff can be placed on top of that)

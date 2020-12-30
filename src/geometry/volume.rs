@@ -99,7 +99,7 @@ impl<'a> Iterator for VolumeIterator<'a> {
 
     /// Advance the iterator to next position of a `Volume`.
     ///
-    /// Iterator begin form bottom left corner and proceed increasing 
+    /// Iterator begin form bottom left corner and proceed increasing
     /// x cordinates, then y, then z.
     ///
     /// Returns `None` when it reaches the top right corner.

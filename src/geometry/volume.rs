@@ -18,11 +18,11 @@ impl Volume {
     /// Volume must at least have size greater or equal to 1 in each dimension,
     /// otherwise it returns a `Option::None`.
     ///
-    /// * `blc` - Bottom left corner
-    /// * `trc` - Top right corner
+    /// * `blc` - Bottom left corner (included)
+    /// * `trc` - Top right corner (included)
     pub fn new(blc: &Position, trc: &Position) -> Option<Self> {
         match blc.partial_cmp(trc) {
-            Some(Ordering::Less) =>
+            Some(Ordering::Less) | Some(Ordering::Equal) =>
             // Bottom left corner is in a valid position
             {
                 Some(Self {
@@ -60,7 +60,7 @@ impl Volume {
 
     /// Compute volume (how many _positions_ inside the volume)
     pub fn volume(&self) -> Scalar {
-        let d = self.diagonal();
+        let d = self.diagonal() + Distance::new(1, 1, 1);
         d.x() * d.y() * d.z()
     }
 
@@ -85,7 +85,7 @@ pub struct VolumeIterator<'a> {
 
 impl<'a> VolumeIterator<'a> {
     /// Create an iterator for a `Volume` and set at the start position
-    fn new(volume: &'a Volume) -> Self {
+    pub fn new(volume: &'a Volume) -> Self {
         Self {
             current_index: 0,
             size: volume.volume(),
@@ -112,8 +112,8 @@ impl<'a> Iterator for VolumeIterator<'a> {
             // Diagonal
             let diagonal = self.volume.diagonal();
             // Size of volume on X and Y axis
-            let x_size = diagonal.x();
-            let y_size = diagonal.y();
+            let x_size = diagonal.x() + 1;
+            let y_size = diagonal.y() + 1;
             // Current index position for iteration
             let index = self.current_index;
             // Compute position using origin + f(index)
@@ -178,7 +178,7 @@ mod tests {
 
             if x0 == x1 && y0 == y1 && z0 == z1 {
                 assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Equal));
-                assert_eq!(Volume::new(&v0, &v1), None);
+                assert!(Volume::new(&v0, &v1).is_some());
             } else {
                 if x0 < x1 && y0 < y1 && z0 < z1 {
                     assert_eq!(v0.partial_cmp(&v1), Some(Ordering::Less));
@@ -228,7 +228,7 @@ mod tests {
     fn volume_test() {
         // Volume of size 1 test
         assert_eq!(
-            Volume::new(&Position::new(0, 0, 0), &Position::new(1, 1, 1))
+            Volume::new(&Position::new(0, 0, 0), &Position::new(0, 0, 0))
                 .unwrap()
                 .volume(),
             1
@@ -238,7 +238,7 @@ mod tests {
             // Create volume
             let vol = random_volume(1, 100);
             let d0 = vol.diagonal();
-            assert_eq!(vol.volume(), d0.x() * d0.y() * d0.z());
+            assert_eq!(vol.volume(), (d0.x() + 1) * (d0.y() + 1) * (d0.z() + 1));
         }
     }
 
@@ -267,16 +267,37 @@ mod tests {
     }
 
     #[test]
+    /// Check if volume of one unit is working correctly
+    fn one_unit_volume_test() {
+        let blc = Position::new(0, 0, 0);
+        let trc = Position::new(0, 0, 0);
+        let vol = Volume::new(&blc, &trc).unwrap();
+
+        assert_eq!(vol.volume(), 1);
+        assert_eq!(vol.into_iter().count(), 1);
+        let mut iter = vol.into_iter();
+
+        assert_eq!(iter.next(), Some(Position::new(0, 0, 0)));
+        assert_eq!(iter.next(), None);
+        assert!(vol.is_inside(&Position::zero()));
+        assert!(vol.is_inside(&blc));
+        assert!(vol.is_inside(&trc));
+    }
+
+    #[test]
     /// Check if a given point is insied or outside the bounding box
     fn inside_test() {
         const SIZE: Scalar = 5;
         const DELTA: Scalar = 5;
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
-            let blc = Position::from(random_vector(-SIZE, SIZE));
-            let diagonal = Distance::from(random_vector(1, SIZE));
+            let blc = random_vector(-SIZE, SIZE);
+            let diagonal = random_vector(1, SIZE);
             let trc = blc + diagonal;
             let bb = Volume::new(&blc, &trc).unwrap();
             let blc = bb.bottom_left_corner();
+
+            assert!(bb.is_inside(&trc));
+            assert!(bb.is_inside(&blc));
 
             // Create all points in an area around volume with a panning of DELTA
             for x in blc.x() - DELTA..blc.x() + DELTA {
@@ -302,8 +323,8 @@ mod tests {
                             && z >= blc.z()
                             && z <= trc.z();
 
-                        assert_eq!(is_inside0, bb.is_inside(&Position::from(point)));
-                        assert_eq!(is_inside1, bb.is_inside(&Position::from(point)));
+                        assert_eq!(is_inside0, bb.is_inside(&point));
+                        assert_eq!(is_inside1, bb.is_inside(&point));
                     }
                 }
             }

@@ -2,6 +2,7 @@
 #![allow(dead_code)]
 
 use crate::geometry::{
+    terrain::{CellMaterial, CellType},
     vector::{Scalar, Vector},
     volume::Volume,
 };
@@ -49,14 +50,6 @@ pub fn random_string(len: usize) -> String {
     text
 }
 
-// /// Generate a volume with position in range (min, max) and size in range (0, max_size)
-// pub fn random_volume(min: Scalar, max: Scalar, max_size: Scalar) -> Volume {
-//     let origin = Position::from(random_vector(min, max));
-//     let other_corner = origin + Distance::from(random_vector(0, max_size));
-
-//     Volume::new(&origin, &other_corner)
-// }
-
 // /// Generate a volume with origini in (0,0,0)
 // pub fn random_volume_with_fixed_origin(
 //     max_width: Scalar,
@@ -72,23 +65,23 @@ pub fn random_string(len: usize) -> String {
 //     Volume::new(&origin, &other_corner)
 // }
 
-// /// Generate a random cell type
-// pub fn random_cell() -> CellType {
-//     let cell_type_gen = random_number(0, 10) % 2;
-//     let material_type_gen = random_number(0, 10) % 2;
+/// Generate a random cell type
+pub fn random_cell() -> CellType {
+    let cell_type_gen = random_number(0, 10) % 2;
+    let material_type_gen = random_number(0, 10) % 2;
 
-//     let material_type = match material_type_gen {
-//         0 => CellMaterial::Dust,
-//         1 => CellMaterial::Water,
-//         _ => panic!("Invalid type"),
-//     };
+    let material_type = match material_type_gen {
+        0 => CellMaterial::Ground,
+        1 => CellMaterial::Water,
+        _ => panic!("Invalid type"),
+    };
 
-//     match cell_type_gen {
-//         0 => CellType::Flat(material_type),
-//         1 => CellType::Fill(material_type),
-//         _ => panic!("Invalid type"),
-//     }
-// }
+    match cell_type_gen {
+        0 => CellType::Flat(material_type),
+        1 => CellType::Fill(material_type),
+        _ => panic!("Invalid type"),
+    }
+}
 
 // /// Generate a random terrain and list of cells generated
 // pub fn random_terrain(volume: Volume) -> (Terrain, HashMap<Position, CellType>) {

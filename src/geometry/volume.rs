@@ -146,8 +146,8 @@ impl<'a> IntoIterator for &'a Volume {
 mod tests {
     use super::super::vector::Vector;
     use super::*;
+    use crate::test_utilities::constants::*;
     use crate::test_utilities::random_generator::*;
-    use crate::test_utilities::{constants::*, random_generator};
 
     #[test]
     // Test is `new` method check properly for provided arguments
@@ -200,8 +200,8 @@ mod tests {
 
         // Random vectors
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
-            let v0 = random_generator::random_vector(-100, 100);
-            let v1 = random_generator::random_vector(-100, 100);
+            let v0 = random_vector(-100, 100);
+            let v1 = random_vector(-100, 100);
 
             let vol = Volume::new(&v0, &v1);
 

@@ -54,4 +54,33 @@ impl Terrain {
         }
         self.cells.get(position).copied()
     }
+
+    /// Gets volume of this terrain.
+    pub fn volume(&self) -> Volume {
+        self.volume
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utilities::constants::*;
+    use crate::test_utilities::random_generator::*;
+
+    #[test]
+    /// Check constructor
+    fn new_test() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_SMALL_TEST {
+            let vol = random_volume(1, 15);
+            let terrain = Terrain::new(&vol);
+
+            assert_eq!(terrain.volume(), vol);
+
+            for p in &vol {
+                assert!(terrain.get_at(&p).is_none());
+            }
+        }
+    }
+    #[test]
+    fn get_outside_test() {}
 }

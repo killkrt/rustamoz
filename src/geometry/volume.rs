@@ -84,6 +84,7 @@ pub struct VolumeIterator<'a> {
 }
 
 impl<'a> VolumeIterator<'a> {
+    /// Create an iterator for a `Volume` and set at the start position
     fn new(volume: &'a Volume) -> Self {
         Self {
             current_index: 0,
@@ -96,6 +97,12 @@ impl<'a> VolumeIterator<'a> {
 impl<'a> Iterator for VolumeIterator<'a> {
     type Item = Position;
 
+    /// Advance the iterator to next position of a `Volume`.
+    ///
+    /// Iterator begin form bottom left corner and proceed increasing 
+    /// x cordinates, then y, then z.
+    ///
+    /// Returns `None` when it reaches the top right corner.
     fn next(&mut self) -> Option<Position> {
         if self.current_index >= self.size {
             None
@@ -123,9 +130,13 @@ impl<'a> Iterator for VolumeIterator<'a> {
 }
 
 impl<'a> IntoIterator for &'a Volume {
+    /// Type of elements being iterated over
     type Item = Position;
+    /// Type of iterator being turned into
     type IntoIter = VolumeIterator<'a>;
 
+    /// Returns an iterator that iterate along all position inside
+    /// this volume
     fn into_iter(self) -> Self::IntoIter {
         VolumeIterator::new(self)
     }

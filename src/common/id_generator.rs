@@ -5,6 +5,7 @@ pub type Id = usize;
 
 static LAST_GENERATED_ID: AtomicUsize = AtomicUsize::new(0);
 
+/// Unique ID generator
 struct IdGenerator;
 
 impl IdGenerator {

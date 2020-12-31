@@ -37,18 +37,18 @@ impl Identifiable {
 
 #[cfg(test)]
 mod test {
-    use constants::NUMBER_OF_LOOPS_FOR_NORMAL_TEST;
+    use constants::*;
 
     use super::Identifiable;
     use crate::test_utilities::*;
-    use std::thread;
+    use std::{sync::mpsc, thread};
 
     #[test]
     fn test_unique_id() {
         let mut ids = vec![];
 
         // Create some id and check if they are unique
-        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_BIG_TEST {
             let id = Identifiable::new();
             ids.push(id.id());
         }
@@ -63,30 +63,53 @@ mod test {
 
     #[test]
     fn multithread_test_unique_id() {
-        const NTHREADS: u32 = 16u32;
-        let mut children = vec![];
+        const NTHREADS: usize = 16usize;
+        const N_ID_PER_THREAD: usize = NUMBER_OF_LOOPS_FOR_MID_TEST;
+        // Channel to receive the ID
+        let (tx, rx) = mpsc::channel::<usize>();
 
-        for _ in 0..NTHREADS {
-            // Spin up another thread
-            children.push(thread::spawn(move || {
-                let mut ids = vec![];
+        //for _ in 0..NTHREADS {
+        // Spawn a new thread
+        let handles: Vec<_> = (0..NTHREADS)
+            .map(|_| {
+                // Clone the sender for a new thread
+                let thread_tx = tx.clone();
+                thread::spawn(move || {
+                    let mut ids = vec![];
 
-                for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
-                    let id = Identifiable::new();
-                    ids.push(id.id());
-                }
-                // Remove all duplicates
-                let len = ids.len();
-                ids.sort();
-                ids.dedup();
-                // No duplicates shall be removed after removing duplicates
-                assert_eq!(ids.len(), len);
-            }));
+                    for _ in 0..N_ID_PER_THREAD {
+                        let id = Identifiable::new();
+                        ids.push(id.id());
+                        // Send ID value to main thread
+                        thread_tx.send(id.id()).unwrap();
+                    }
+                    // Remove all duplicates
+                    let len = ids.len();
+                    ids.sort();
+                    ids.dedup();
+                    // No duplicates shall be removed after removing duplicates
+                    assert_eq!(ids.len(), len);
+                })
+            })
+            .collect();
+
+        // Wait for threads to complete
+        for handle in handles {
+            handle.join().unwrap();
         }
 
-        for child in children {
-            // Wait for the thread to finish.
-            let _ = child.join();
+        let mut ids = vec![];
+        for id in rx.try_iter() {
+            // Sum all ID
+            ids.push(id);
         }
+
+        // Remove all duplicates
+        let len = ids.len();
+        ids.sort();
+        ids.dedup();
+        // No duplicates shall be removed after removing duplicates
+        assert_eq!(ids.len(), len);
+        assert_eq!(ids.len(), NTHREADS * N_ID_PER_THREAD);
     }
 }

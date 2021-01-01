@@ -1,20 +1,19 @@
 #![allow(dead_code)]
 
+use super::{vector::Position, volume::Volume};
+use log::warn;
+use serde::Serialize;
 use std::collections::{hash_map::Iter, HashMap};
 
-use log::warn;
-
-use super::{vector::Position, volume::Volume};
-
 /// Possible types of cell materials
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Serialize)]
 pub enum CellMaterial {
     Water,
     Ground,
 }
 
 /// Possible types of cell
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Serialize)]
 pub enum CellType {
     /// Cell full of material (cannot placed anything on top of that)
     Fill(CellMaterial),

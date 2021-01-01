@@ -12,6 +12,8 @@ pub enum PlayerRage {
     Yellow,
 }
 
+const MAX_PLAYER_NAME_LEN: usize = 8usize;
+
 #[derive(Clone, Debug, Serialize)]
 /// Contains the _static_ information of a player.
 pub struct PlayerInfo {
@@ -27,9 +29,11 @@ pub struct PlayerInfo {
 
 impl PlayerInfo {
     /// Create a new player info with provided data
+    ///
+    /// *Note*: Player name will be truncated to 16 chars.
     pub fn new(name: &str, rage: PlayerRage, is_human: bool) -> Self {
         Self {
-            name: String::from(name),
+            name: String::from(&name[..usize::min(name.len(), MAX_PLAYER_NAME_LEN)]),
             rage,
             is_human,
             id: new_id(),
@@ -65,15 +69,15 @@ mod tests {
         random_generator::{random_bool, random_number, random_string},
     };
 
-    use super::PlayerInfo;
     use super::PlayerRage;
+    use super::{PlayerInfo, MAX_PLAYER_NAME_LEN};
 
     #[test]
     /// Test if constructor is not messing up data
     fn new_test() {
         let mut ids = vec![];
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
-            let len = random_number(1, 16);
+            let len = random_number(0, 32);
             let name = random_string(len);
             let is_human = random_bool();
             let rage_sel = random_number(0, 6);
@@ -89,12 +93,23 @@ mod tests {
 
             let p_info = PlayerInfo::new(&name, rage, is_human);
 
-            assert_eq!(p_info.name(), &name);
+            assert_eq!(
+                p_info.name(),
+                &name[..usize::min(name.len(), MAX_PLAYER_NAME_LEN)]
+            );
+            assert!(p_info.name().len() <= MAX_PLAYER_NAME_LEN);
             assert_eq!(p_info.is_human(), is_human);
             assert_eq!(p_info.rage(), rage);
             ids.push(p_info.id());
         }
 
         assert!(check_for_duplicate(&mut ids));
+    }
+
+    #[test]
+    /// Check if empty name is accepted
+    fn empty_name_test() {
+        let p_info = PlayerInfo::new("", PlayerRage::Red, true);
+        assert_eq!(p_info.name(), "");
     }
 }

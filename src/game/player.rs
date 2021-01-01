@@ -61,7 +61,7 @@ impl PlayerInfo {
 mod tests {
     use crate::test_utilities::{
         common::check_for_duplicate,
-        constants::NUMBER_OF_LOOPS_FOR_BIG_TEST,
+        constants::NUMBER_OF_LOOPS_FOR_NORMAL_TEST,
         random_generator::{random_bool, random_number, random_string},
     };
 
@@ -72,7 +72,7 @@ mod tests {
     /// Test if constructor is not messing up data
     fn new_test() {
         let mut ids = vec![];
-        for _ in 0..NUMBER_OF_LOOPS_FOR_BIG_TEST {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             let len = random_number(1, 16);
             let name = random_string(len);
             let is_human = random_bool();

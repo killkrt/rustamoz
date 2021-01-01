@@ -50,6 +50,11 @@ pub fn random_string(len: usize) -> String {
     text
 }
 
+/// Generate a random boolean value
+pub fn random_bool() -> bool {
+    random_number(0, 10) % 2 == 0
+}
+
 // /// Generate a volume with origini in (0,0,0)
 // pub fn random_volume_with_fixed_origin(
 //     max_width: Scalar,

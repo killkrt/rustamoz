@@ -18,3 +18,15 @@ pub fn nearly_equal(a: f32, b: f32) -> bool {
         (diff / f32::min(abs_a + abs_b, std::f32::MAX)) < std::f32::EPSILON
     }
 }
+
+pub fn check_for_duplicate<T>(list: &mut Vec<T>) -> bool
+where
+    T: Ord,
+{
+    // Remove all duplicates
+    let len = list.len();
+    list.sort();
+    list.dedup();
+    // No duplicates shall be removed after removing duplicates
+    list.len() == len
+}

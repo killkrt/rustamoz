@@ -5,44 +5,21 @@ pub type Id = usize;
 
 static LAST_GENERATED_ID: AtomicUsize = AtomicUsize::new(0);
 
-/// Unique ID generator
-struct IdGenerator;
-
-impl IdGenerator {
-    /// Generate an unique ID
-    pub fn generate_id() -> Id {
-        // Return current value and add 1 to current ID
-        LAST_GENERATED_ID.fetch_add(1, std::sync::atomic::Ordering::SeqCst)
-    }
-}
-
-/// A generic element that can be identifiable in a unique way
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub struct Identifiable {
-    id: Id,
-}
-
-impl Identifiable {
-    /// Create a new element with unique id
-    pub fn new() -> Self {
-        Identifiable {
-            id: IdGenerator::generate_id(),
-        }
-    }
-
-    /// Get unique id
-    pub fn id(&self) -> Id {
-        self.id
-    }
+/// Generate an unique ID
+pub fn new_id() -> Id {
+    // Return current value and add 1 to current ID
+    LAST_GENERATED_ID.fetch_add(1, std::sync::atomic::Ordering::SeqCst)
 }
 
 #[cfg(test)]
 mod test {
+    use common::check_for_duplicate;
     use constants::*;
 
-    use super::Identifiable;
     use crate::test_utilities::*;
     use std::{sync::mpsc, thread};
+
+    use super::new_id;
 
     #[test]
     fn test_unique_id() {
@@ -50,16 +27,12 @@ mod test {
 
         // Create some id and check if they are unique
         for _ in 0..NUMBER_OF_LOOPS_FOR_BIG_TEST {
-            let id = Identifiable::new();
-            ids.push(id.id());
+            let id = new_id();
+            ids.push(id);
         }
 
-        // Remove all duplicates
-        let len = ids.len();
-        ids.sort();
-        ids.dedup();
-        // No duplicates shall be removed after removing duplicates
-        assert_eq!(ids.len(), len);
+        // Check for duplicates
+        check_for_duplicate(&mut ids);
     }
 
     #[test]
@@ -79,17 +52,13 @@ mod test {
                     let mut ids = vec![];
 
                     for _ in 0..N_ID_PER_THREAD {
-                        let id = Identifiable::new();
-                        ids.push(id.id());
+                        let id = new_id();
+                        ids.push(id);
                         // Send ID value to main thread
-                        thread_tx.send(id.id()).unwrap();
+                        thread_tx.send(id).unwrap();
                     }
-                    // Remove all duplicates
-                    let len = ids.len();
-                    ids.sort();
-                    ids.dedup();
-                    // No duplicates shall be removed after removing duplicates
-                    assert_eq!(ids.len(), len);
+                    // Check for duplicates
+                    check_for_duplicate(&mut ids);
                 })
             })
             .collect();
@@ -105,12 +74,8 @@ mod test {
             ids.push(id);
         }
 
-        // Remove all duplicates
-        let len = ids.len();
-        ids.sort();
-        ids.dedup();
-        // No duplicates shall be removed after removing duplicates
-        assert_eq!(ids.len(), len);
+        // Check for duplicates
+        check_for_duplicate(&mut ids);
         assert_eq!(ids.len(), NTHREADS * N_ID_PER_THREAD);
     }
 }

@@ -1,4 +1,5 @@
 mod common;
+mod game;
 mod geometry;
 
 #[cfg(test)]

@@ -12,3 +12,6 @@ pub mod game_state;
 
 /// Imports CellState
 pub mod cell_state;
+
+/// Imports GameRule
+pub mod game_rule;

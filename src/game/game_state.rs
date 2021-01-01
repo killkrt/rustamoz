@@ -27,7 +27,7 @@ where
     /// Set current active player.
     ///
     /// `true` if player ID is valid.
-    fn set_current_player(&self, player: Id) -> bool;
+    fn set_current_player(&mut self, player: Id) -> bool;
 
     /// Returns ID of current turn being played.
     ///
@@ -35,7 +35,7 @@ where
     fn current_turn(&self) -> TurnId;
 
     /// Set ID of current turn being played.
-    fn set_current_turn(&self, turn: TurnId);
+    fn set_current_turn(&mut self, turn: TurnId);
 
     /// Returns ID of substep of current turn being played.
     ///
@@ -45,7 +45,7 @@ where
     /// Sets ID of substep of current turn being played.
     ///
     /// Substep can be used expecially by UI for animation purpose.
-    fn set_current_turn_substep(&self, substep: TurnId);
+    fn set_current_turn_substep(&mut self, substep: TurnId);
 
     /// Returns the state of selected player.
     ///
@@ -57,7 +57,7 @@ where
     ///
     /// Returns `false` if player Id is not associated to any player
     /// of this game state.
-    fn set_player_state(&self, player_id: Id, state: Self::PS) -> bool;
+    fn set_player_state(&mut self, player_id: Id, state: Self::PS) -> bool;
 
     /// Returns the state of specified cell.
     ///
@@ -67,5 +67,5 @@ where
     /// Sets the state of specified cell.
     ///
     /// Return `false` if the position is not valid.
-    fn set_cell_state(&self, position: &Position, state: Self::CS) -> bool;
+    fn set_cell_state(&mut self, position: &Position, state: Self::CS) -> bool;
 }

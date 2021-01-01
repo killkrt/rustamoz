@@ -296,6 +296,7 @@ mod tests {
             let (t, cells) = random_terrain(&vol);
             let serialized_t = serde_json::to_string(&t).ok().expect("Cannot serialize");
             assert_eq!(cells.len(), t.into_iter().count());
+            // For each cell we need at least 24 chars.
             assert!(
                 serialized_t.len() > cells.len() * 24,
                 "{} > {}",

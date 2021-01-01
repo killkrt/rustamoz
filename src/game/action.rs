@@ -1,15 +1,17 @@
+use std::fmt::Debug;
+
 use serde::Serialize;
 
 use super::actor::Actor;
 
 /// Id for turn and turn substep
-type TurnId = usize;
+pub type TurnId = usize;
 
 /// Represents a generic action that a `Actor` can perform or _receive_.
-/// Action must be serializable
+/// Action must be serializable and _debuggable_.
 pub trait Action
 where
-    Self: Serialize,
+    Self: Serialize + Debug,
 {
     /// Returns source (who has generated) of this action.
     fn source(&self) -> Actor;

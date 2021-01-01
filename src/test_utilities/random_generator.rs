@@ -1,9 +1,11 @@
 #![cfg(test)]
 #![allow(dead_code)]
 
+use std::collections::HashMap;
+
 use crate::geometry::{
-    terrain::{CellMaterial, CellType},
-    vector::{Scalar, Vector},
+    terrain::{CellMaterial, CellType, Terrain},
+    vector::{Position, Scalar, Vector},
     volume::Volume,
 };
 use num::Num;
@@ -88,21 +90,18 @@ pub fn random_cell() -> CellType {
     }
 }
 
-// /// Generate a random terrain and list of cells generated
-// pub fn random_terrain(volume: Volume) -> (Terrain, HashMap<Position, CellType>) {
-//     let mut terrain = Terrain::new(volume);
-//     let mut cells = HashMap::new();
+/// Generate a random terrain and list of cells generated
+pub fn random_terrain(volume: &Volume) -> (Terrain, HashMap<Position, CellType>) {
+    let mut terrain = Terrain::new(volume);
+    let mut cells = HashMap::new();
 
-//     for pos in &volume {
-//         if random_number(0, 10) > 5 {
-//             let cell = random_cell();
-//             for z in 0..pos.vector().z() {
-//                 let h = Position::new(pos.vector().x(), pos.vector().y(), z);
-//                 terrain.set_cell_at(&h, cell);
-//                 cells.insert(h, cell);
-//             }
-//         }
-//     }
+    for pos in volume {
+        if random_number(0, 10) > 5 {
+            let cell = random_cell();
+            assert!(terrain.set_cell_at(&pos, cell));
+            cells.insert(pos, cell);
+        }
+    }
 
-//     (terrain, cells)
-// }
+    (terrain, cells)
+}

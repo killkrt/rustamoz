@@ -2,6 +2,7 @@
 
 use super::{vector::Position, volume::Volume};
 use log::warn;
+use serde::ser::{SerializeSeq, Serializer};
 use serde::Serialize;
 use std::collections::{hash_map::Iter, HashMap};
 
@@ -31,6 +32,21 @@ pub struct Terrain {
     volume: Volume,
     /// Maps that for each valid position returns the type of cell at that position.
     cells: HashMap<Position, CellType>,
+}
+
+impl Serialize for Terrain {
+    /// Serialize contain of Terrain
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(self.cells.len()))?;
+        for cell in &self.cells {
+            seq.serialize_element(&cell)?;
+        }
+
+        seq.end()
+    }
 }
 
 impl Terrain {
@@ -269,6 +285,23 @@ mod tests {
                     }
                 }
             }
+        }
+    }
+
+    #[test]
+    /// Check if serialization + deserialization of a terrain is consistent
+    fn serialize_test() {
+        for _ in 0..NUMBER_OF_LOOPS_FOR_SMALL_TEST {
+            let vol = random_volume(1, 10);
+            let (t, cells) = random_terrain(&vol);
+            let serialized_t = serde_json::to_string(&t).ok().expect("Cannot serialize");
+            assert_eq!(cells.len(), t.into_iter().count());
+            assert!(
+                serialized_t.len() > cells.len() * 24,
+                "{} > {}",
+                serialized_t.len(),
+                cells.len() * 24
+            );
         }
     }
 }

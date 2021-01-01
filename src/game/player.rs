@@ -1,4 +1,9 @@
+use std::fmt::Debug;
+
 use serde::Serialize;
+
+/// Type used to store score points
+pub type Score = usize;
 
 use crate::common::id_generator::{new_id, Id};
 /// Represents player _rage_.
@@ -59,6 +64,21 @@ impl PlayerInfo {
     pub fn id(&self) -> Id {
         self.id
     }
+}
+
+/// Represents a generic state for a player.
+pub trait PlayerState
+where
+    Self: Serialize + Debug,
+{
+    /// Returns whether the player is alive (thus can play).
+    fn is_alive(&self) -> bool;
+
+    /// Returns whether the player is currently active and playing its turn.
+    fn is_current(&self) -> bool;
+
+    /// Returns a numeric value representing player current score.
+    fn score(&self) -> Score;
 }
 
 #[cfg(test)]

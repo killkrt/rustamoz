@@ -69,7 +69,7 @@ impl PlayerInfo {
 /// Represents a generic state for a player.
 pub trait PlayerState
 where
-    Self: Serialize + Debug,
+    Self: Debug + Clone + Serialize,
 {
     /// Returns whether the player is alive (thus can play).
     fn is_alive(&self) -> bool;

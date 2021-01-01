@@ -26,7 +26,7 @@ pub enum CellType {
 ///
 /// Terrain has a volume (its bounding box), cells can be placed only
 /// inside this volume.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Terrain {
     /// Max bounduary box (cell cannot be placed outside of this volume)
     volume: Volume,

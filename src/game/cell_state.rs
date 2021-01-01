@@ -7,7 +7,7 @@ use crate::common::id_generator::Id;
 type CellOccupation = u8;
 
 /// Represents a generic state of a game cell.
-pub trait CellState: Debug + Clone + Serialize {
+pub trait CellState: Debug + Serialize {
     /// Returns number of elements in a cell owned by specified player.
     ///
     /// `None` if the player has not any element in this cell.

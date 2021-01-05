@@ -5,7 +5,13 @@ use serde::Serialize;
 /// Type used to store score points
 pub type Score = usize;
 
-use crate::common::id_generator::{new_id, Id};
+/// Type used to store player ID
+pub type PlayerId = Id;
+
+use crate::common::{
+    clone_arc::Clonable,
+    id_generator::{new_id, Id},
+};
 /// Represents player _rage_.
 #[derive(Clone, Copy, Debug, Serialize, PartialEq, Eq)]
 pub enum PlayerRage {
@@ -29,7 +35,7 @@ pub struct PlayerInfo {
     /// Whether this player is controlled by human
     is_human: bool,
     /// Id of the player
-    id: Id,
+    id: PlayerId,
 }
 
 impl PlayerInfo {
@@ -61,7 +67,7 @@ impl PlayerInfo {
     }
 
     /// Returns player ID
-    pub fn id(&self) -> Id {
+    pub fn id(&self) -> PlayerId {
         self.id
     }
 }
@@ -69,7 +75,7 @@ impl PlayerInfo {
 /// Represents a generic state for a player.
 pub trait PlayerState
 where
-    Self: Debug + Clone + Serialize,
+    Self: Debug + Clonable,
 {
     /// Returns whether the player is alive (thus can play).
     fn is_alive(&self) -> bool;
@@ -79,6 +85,9 @@ where
 
     /// Returns a numeric value representing player current score.
     fn score(&self) -> Score;
+
+    /// Returns the player ID
+    fn id(&self) -> PlayerId;
 }
 
 #[cfg(test)]

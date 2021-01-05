@@ -1,6 +1,10 @@
 use std::sync::Arc;
 
-use super::{action::Action, game_state::GameState};
+use super::{
+    action::Action,
+    game_state::GameState,
+    player::{PlayerId, PlayerState},
+};
 
 /// Represents a generic game rule.
 pub trait GameRule
@@ -27,4 +31,21 @@ where
 
     /// Returns `true` if this rule can manage the provided action.
     fn can_handle(&self, action: &Self::A) -> bool;
+}
+
+pub trait BasicRule
+where
+    Self::GS: GameState,
+{
+    /// Associated type for game state
+    type GS;
+
+    /// Given a `GameState` returns the winner or `None`
+    fn winner(&self, game_state: &Self::GS) -> Option<PlayerId>;
+
+    fn next_player(
+        &self,
+        game_state: &Self::GS,
+        players: Vec<&dyn PlayerState>,
+    ) -> Option<PlayerId>;
 }

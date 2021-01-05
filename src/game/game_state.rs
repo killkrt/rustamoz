@@ -7,7 +7,7 @@ use crate::{
 
 use super::{action::TurnId, cell_state::CellState, player::PlayerState};
 /// Represents state of particular moment of the game.
-pub trait GameState
+pub trait GameState: Clone
 where
     Self::PS: PlayerState,
     Self::CS: CellState,

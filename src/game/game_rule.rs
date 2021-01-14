@@ -33,6 +33,9 @@ where
     fn can_handle(&self, action: &Self::A) -> bool;
 }
 
+/// Represents generic basic rules that defines criteria for:
+/// - Next player.
+/// - In case there is winner which player is.
 pub trait BasicRules
 where
     Self::GS: GameState,

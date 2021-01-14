@@ -1,5 +1,5 @@
 mod common;
-mod game;
+mod generic_game;
 mod geometry;
 
 #[cfg(test)]

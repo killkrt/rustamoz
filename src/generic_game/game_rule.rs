@@ -49,6 +49,8 @@ where
     /// Given a `GameState` returns the winner or `None`
     fn winner(&self, game_state: &Self::GS) -> Option<PlayerId>;
 
+    /// Given current state and list of players in the game return next player
+    /// that has to play
     fn next_player(
         &self,
         game_state: &Self::GS,

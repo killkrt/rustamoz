@@ -33,19 +33,22 @@ where
     fn can_handle(&self, action: &Self::A) -> bool;
 }
 
-pub trait BasicRule
+pub trait BasicRules
 where
     Self::GS: GameState,
+    Self::PS: PlayerState,
 {
     /// Associated type for game state
     type GS;
+    /// Associated type for player state
+    type PS;
 
     /// Given a `GameState` returns the winner or `None`
     fn winner(&self, game_state: &Self::GS) -> Option<PlayerId>;
 
-    fn next_player<S>(
+    fn next_player(
         &self,
         game_state: &Self::GS,
-        players: Vec<&dyn PlayerState<Data = S>>,
+        players: Vec<&dyn PlayerState<Data = Self::PS>>,
     ) -> Option<PlayerId>;
 }

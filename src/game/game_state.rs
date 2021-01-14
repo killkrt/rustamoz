@@ -1,14 +1,18 @@
-use std::sync::Arc;
+use std::{fmt::Debug, sync::Arc};
 
 use crate::{
-    common::id_generator::Id,
+    common::{
+        clone_arc::{Clonable, CloneArc},
+        id_generator::Id,
+    },
     geometry::{terrain::Terrain, vector::Position},
 };
 
 use super::{action::TurnId, cell_state::CellState, player::PlayerState};
 /// Represents state of particular moment of the game.
-pub trait GameState: Clone
+pub trait GameState
 where
+    Self: Debug + CloneArc + Clonable,
     Self::PS: PlayerState,
     Self::CS: CellState,
 {

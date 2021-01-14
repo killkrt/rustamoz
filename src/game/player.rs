@@ -86,8 +86,8 @@ impl Serializable for PlayerInfo {
 /// Represents a generic state for a player.
 pub trait PlayerState
 where
-    Self: Debug + CloneArc,
-    Self::Data: Debug + Clonable + Serializable,
+    Self: Debug + CloneArc + Clonable,
+    Self::Data: Serializable,
 {
     type Data;
 

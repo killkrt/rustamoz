@@ -14,8 +14,8 @@ pub type TurnId = usize;
 /// Action must be serializable and _debuggable_.
 pub trait Action
 where
-    Self: Debug + CloneArc,
-    Self::Data: Debug + Clonable + Serializable,
+    Self: Debug + CloneArc + Clonable,
+    Self::Data: Serializable,
 {
     type Data;
 

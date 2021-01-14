@@ -1,7 +1,7 @@
-use std::sync::Arc;
+use std::{fmt::Debug, sync::Arc};
 
 /// Generic trait for arc-clonable objects
-pub trait Clonable {}
+pub trait Clonable: Debug {}
 
 /// Trait that provide a method to clone via `Arc`
 pub trait CloneArc {

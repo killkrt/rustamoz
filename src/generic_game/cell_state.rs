@@ -1,10 +1,6 @@
 use std::fmt::Debug;
 
-use crate::common::{
-    clone_arc::{Clonable, CloneArc},
-    id_generator::Id,
-    serializable::Serializable,
-};
+use crate::common::{clone_arc::Clonable, id_generator::Id, serializable::Serializable};
 
 /// Type used for number of elements in a cell
 type CellOccupation = u8;
@@ -12,7 +8,7 @@ type CellOccupation = u8;
 /// Represents a generic state of a game cell.
 pub trait CellState
 where
-    Self: Debug + CloneArc + Clonable,
+    Self: Debug + Clonable,
     Self::Data: Serializable,
 {
     type Data;

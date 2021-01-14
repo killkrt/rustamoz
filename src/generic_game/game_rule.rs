@@ -54,6 +54,6 @@ where
     fn next_player(
         &self,
         game_state: &Self::GS,
-        players: Vec<&dyn PlayerState<Data = Self::PS>>,
+        players: Vec<Arc<dyn PlayerState<Data = Self::PS>>>,
     ) -> Option<PlayerId>;
 }

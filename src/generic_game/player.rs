@@ -3,13 +3,13 @@ use std::fmt::Debug;
 use serde::Serialize;
 
 /// Type used to store score points
-pub type Score = usize;
+pub type Score = u32;
 
 /// Type used to store player ID
 pub type PlayerId = Id;
 
 use crate::common::{
-    clone_arc::{Clonable, CloneArc},
+    clone_arc::Clonable,
     id_generator::{new_id, Id},
     serializable::Serializable,
 };
@@ -86,7 +86,7 @@ impl Serializable for PlayerInfo {
 /// Represents a generic state for a player.
 pub trait PlayerState
 where
-    Self: Debug + CloneArc + Clonable,
+    Self: Debug + Clonable,
     Self::Data: Serializable,
 {
     type Data;
@@ -94,11 +94,20 @@ where
     /// Returns whether the player is alive (thus can play).
     fn is_alive(&self) -> bool;
 
+    /// Set whether the player is alive (thus can play).
+    fn set_is_alive(&mut self, is_alive: bool);
+
     /// Returns whether the player is currently active and playing its turn.
     fn is_current(&self) -> bool;
 
+    /// Set whether the player is currently active and playing its turn.
+    fn set_is_current(&mut self, is_current: bool);
+
     /// Returns a numeric value representing player current score.
     fn score(&self) -> Score;
+
+    /// Set a numeric value representing player current score.
+    fn set_score(&mut self, score: Score);
 
     /// Returns the player ID
     fn id(&self) -> PlayerId;

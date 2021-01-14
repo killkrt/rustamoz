@@ -1,3 +1,4 @@
+mod classic_game;
 mod common;
 mod generic_game;
 mod geometry;

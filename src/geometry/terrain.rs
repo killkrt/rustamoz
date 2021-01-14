@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use crate::common::serializable::Serializable;
+
 use super::{vector::Position, volume::Volume};
 use log::warn;
 use serde::ser::{SerializeSeq, Serializer};
@@ -145,6 +147,16 @@ impl Terrain {
             );
             false
         }
+    }
+}
+
+impl Serializable for Terrain {
+    /// Type of data to be serialized
+    type Data = Terrain;
+
+    /// Return data to be serialized
+    fn data_to_be_serialized(&self) -> &Self::Data {
+        &self
     }
 }
 

@@ -1,13 +1,17 @@
-use serde::Serialize;
 use std::fmt::Debug;
 
-use crate::common::id_generator::Id;
+use crate::common::{clone_arc::CloneArc, id_generator::Id, serializable::Serializable};
 
 /// Type used for number of elements in a cell
 type CellOccupation = u8;
 
 /// Represents a generic state of a game cell.
-pub trait CellState: Debug + Serialize + Clone {
+pub trait CellState: Debug + CloneArc
+where
+    Self::Data: Serializable,
+{
+    type Data;
+
     /// Returns number of elements in a cell owned by specified player.
     ///
     /// `None` if the player has not any element in this cell.

@@ -9,8 +9,9 @@ pub type Score = usize;
 pub type PlayerId = Id;
 
 use crate::common::{
-    clone_arc::Clonable,
+    clone_arc::{Clonable, CloneArc},
     id_generator::{new_id, Id},
+    serializable::Serializable,
 };
 /// Represents player _rage_.
 #[derive(Clone, Copy, Debug, Serialize, PartialEq, Eq)]
@@ -72,11 +73,24 @@ impl PlayerInfo {
     }
 }
 
+impl Serializable for PlayerInfo {
+    /// Type of data to be serialized
+    type Data = PlayerInfo;
+
+    /// Return data to be serialized
+    fn data_to_be_serialized(&self) -> &Self::Data {
+        &self
+    }
+}
+
 /// Represents a generic state for a player.
 pub trait PlayerState
 where
-    Self: Debug + Clonable,
+    Self: Debug + CloneArc,
+    Self::Data: Debug + Clonable + Serializable,
 {
+    type Data;
+
     /// Returns whether the player is alive (thus can play).
     fn is_alive(&self) -> bool;
 

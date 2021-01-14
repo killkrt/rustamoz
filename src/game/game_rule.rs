@@ -43,9 +43,9 @@ where
     /// Given a `GameState` returns the winner or `None`
     fn winner(&self, game_state: &Self::GS) -> Option<PlayerId>;
 
-    fn next_player(
+    fn next_player<S>(
         &self,
         game_state: &Self::GS,
-        players: Vec<&dyn PlayerState>,
+        players: Vec<&dyn PlayerState<Data = S>>,
     ) -> Option<PlayerId>;
 }

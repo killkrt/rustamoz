@@ -13,11 +13,6 @@ where
     fn data_to_be_serialized(&self) -> &Self::Data;
 
     /// Serialize data to JSON string
-    fn serialize(&self) -> Result<String, Error>;
-}
-
-impl<S: Serialize> Serializable<Data = S> {
-    /// Serialize data to JSON string
     fn serialize(&self) -> Result<String, Error> {
         serde_json::to_string(self.data_to_be_serialized())
     }

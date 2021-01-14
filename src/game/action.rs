@@ -1,6 +1,9 @@
 use std::fmt::Debug;
 
-use serde::Serialize;
+use crate::common::{
+    clone_arc::{Clonable, CloneArc},
+    serializable::Serializable,
+};
 
 use super::actor::Actor;
 
@@ -11,8 +14,11 @@ pub type TurnId = usize;
 /// Action must be serializable and _debuggable_.
 pub trait Action
 where
-    Self: Serialize + Debug,
+    Self: Debug + CloneArc,
+    Self::Data: Debug + Clonable + Serializable,
 {
+    type Data;
+
     /// Returns source (who has generated) of this action.
     fn source(&self) -> Actor;
 

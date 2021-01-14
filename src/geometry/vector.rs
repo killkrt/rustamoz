@@ -3,6 +3,8 @@ use std::cmp::Ordering;
 use std::ops::Add;
 use std::ops::Sub;
 
+use crate::common::serializable::Serializable;
+
 /// Type used to store Vector components
 pub type Scalar = i32;
 
@@ -97,6 +99,15 @@ impl PartialOrd for Vector {
             // Not clear comparison possible
             None
         }
+    }
+}
+
+impl Serializable for Vector {
+    type Data = Vector;
+
+    /// Return data to be serialized
+    fn data_to_be_serialized(&self) -> &Self::Data {
+        &self
     }
 }
 

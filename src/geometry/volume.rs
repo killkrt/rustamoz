@@ -1,3 +1,5 @@
+use crate::common::serializable::Serializable;
+
 use super::vector::Position;
 use super::vector::{Distance, Scalar};
 use log::warn;
@@ -73,6 +75,16 @@ impl Volume {
             && diff.y() <= diagonal.y()
             && diff.z() <= diagonal.z()
             && diff.is_positive()
+    }
+}
+
+impl Serializable for Volume {
+    /// Type of data to be serialized
+    type Data = Volume;
+
+    /// Return data to be serialized
+    fn data_to_be_serialized(&self) -> &Self::Data {
+        &self
     }
 }
 

@@ -106,6 +106,7 @@ mod tests {
     }
 
     #[test]
+    /// Check if setter methods works consinstently
     fn set_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             let id = random_number(0, usize::MAX);
@@ -132,6 +133,7 @@ mod tests {
     }
 
     #[test]
+    /// Test if arc_clone works correctly
     fn arc_clone_test() {
         for _ in 0..NUMBER_OF_LOOPS_FOR_NORMAL_TEST {
             let ps = random_player_state();

@@ -5,7 +5,11 @@ use crate::{
     geometry::{terrain::Terrain, vector::Position},
 };
 
-use super::{action::TurnId, cell_state::CellState, player::PlayerState};
+use super::{
+    action::TurnId,
+    cell_state::CellState,
+    player::{PlayerId, PlayerState},
+};
 /// Represents state of particular moment of the game.
 pub trait GameState
 where
@@ -23,12 +27,12 @@ where
     fn terrain(&self) -> Arc<Terrain>;
 
     /// Returns current active player.
-    fn current_player(&self) -> Id;
+    fn current_player(&self) -> PlayerId;
 
     /// Set current active player.
     ///
     /// `true` if player ID is valid.
-    fn set_current_player(&mut self, player: Id) -> bool;
+    fn set_current_player(&mut self, player: PlayerId) -> bool;
 
     /// Returns ID of current turn being played.
     ///
@@ -52,13 +56,13 @@ where
     ///
     /// Returns `None` if player Id is not associated to any player
     /// of this game state.
-    fn player_state(&self, player_id: Id) -> Option<Self::PS>;
+    fn player_state(&self, player_id: PlayerId) -> Option<Self::PS>;
 
     /// Set the state of selected player.
     ///
     /// Returns `false` if player Id is not associated to any player
     /// of this game state.
-    fn set_player_state(&mut self, player_id: Id, state: Self::PS) -> bool;
+    fn set_player_state(&mut self, player_id: PlayerId, state: &Self::PS) -> bool;
 
     /// Returns the state of specified cell.
     ///
@@ -68,5 +72,5 @@ where
     /// Sets the state of specified cell.
     ///
     /// Return `false` if the position is not valid.
-    fn set_cell_state(&mut self, position: &Position, state: Self::CS) -> bool;
+    fn set_cell_state(&mut self, position: &Position, state: &Self::CS) -> bool;
 }
